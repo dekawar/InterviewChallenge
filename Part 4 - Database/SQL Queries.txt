@@ -1,0 +1,24 @@
+-- Queries
+-- I have never worked with creating a DB and using the CREATE or DROP commands (for tables or databases), although I have seen it done and believe I could do it. Inasmuch as this is a shortcoming, I will defer on these points, but indicate that I recall the method used would be to use CREATE to make the tables, and then they could be loaded using a saved version at a later date, or by building them out with spreadsheets, or other manual entry methods.
+-- In order to start fresh, the existing DB would then need to DROP DB, followed by using CREATE DB from a BACKUP DB, or recreated from a spreadsheet (not the best method, but workable.
+
+-- 1) Return a count of how many SyndicationFeed records are in the database.
+SELECT COUNT(*) AS count FROM SyndicationFeed;
+
+-- 2) Return a count of how many SyndicationFeed records by SyndicationSource there are and then order by the largest number to smallest number.
+SELECT COUNT(*) AS count FROM SyndicationFeed GROUP BY SyndicationSourceId ORDER BY count DESC;
+
+-- 3) In a single query, see specified columns from two tables
+SELECT (ss.Id, ss.IsActive, ss.Title, ss.LastRunDate, frl.FeedPayload, frl.HttpStatus, frl.ContentLength)
+    FROM SyndicationSource AS ss 
+    JOIN FeedRunLog AS frl
+      ON frl.SyndicationSourceId = ss.Id;
+
+-- 4) Create a query to filter SyndicationFeed records by Category Name.
+SELECT *
+    FROM SyndicationFeed AS sf
+    JOIN SyndicationFeedToCategory AS sftc
+      ON sftc.SyndicationFeedId = sf.Id
+    JOIN Category AS c
+      ON sftc.CategoryId = c.Id
+    WHERE c.Name = '&usercategoryname';
